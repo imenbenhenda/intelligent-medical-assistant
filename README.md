@@ -5,7 +5,7 @@
 [![Transformers](https://img.shields.io/badge/%20Transformers-Latest-orange)](https://huggingface.co/transformers)
 
 ## 🚀 Live Demo
-**Try it here:** [Lien vers votre démo]
+**Try it here:** https://github.com/imenbenhenda/intelligent-medical-assistant
 
 ## 📋 Project Overview
 An intelligent LLM-based system that helps medical researchers quickly analyze scientific articles by automatically extracting key information and generating structured summaries.
