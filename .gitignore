@@ -1,0 +1,37 @@
+# Data - NE PAS inclure les datasets
+data/raw/
+data/processed/
+*.jsonl
+*.txt
+
+# Models - NE PAS inclure les modèles entraînés
+models/
+*.bin
+*.safetensors
+
+# Environnement Python
+env/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Jupyter
+.ipynb_checkpoints/
