@@ -23,7 +23,7 @@ MedicalLiteratureAssistant/
 ├── data/ # Dataset configuration
 └── models/ # Model configuration
 ```
-📊 Model Performance
+## 📊 Model Performance
 ```
 Accuracy: 92.46%
 F1-Score: 92.36%
@@ -45,14 +45,14 @@ python app/app.py
 Visit http://localhost:5000
 
 ```
-** 🎯 Technical Highlights **
+## 🎯 Technical Highlights 
 
 - Fine-tuned BioBERT on PubMed 200k RCT dataset
 - Custom preprocessing pipeline for medical text
 - Real-time Flask interface with responsive design
 - Batch processing for efficient analysis
 
-** 📁 Dataset **
+## 📁 Dataset 
 
 - PubMed 200k RCT: 200,000 medical abstracts
 - Sequential sentence classification for structured extraction
