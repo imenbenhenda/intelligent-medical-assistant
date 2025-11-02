@@ -19,7 +19,7 @@ An intelligent LLM-based system that helps medical researchers quickly analyze s
 MedicalLiteratureAssistant/
 ├── app/ # Flask web interface
 ├── src/ # Core ML pipeline
-├── notebooks/ # Data exploration & analysis
+├── notebooks/ # Data exploration and analysis
 ├── data/ # Dataset configuration
 └── models/ 
 ```
