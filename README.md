@@ -24,37 +24,39 @@ MedicalLiteratureAssistant/
 └── models/ # Model configuration
 ```
 📊 Model Performance
-
+```
 Accuracy: 92.46%
 F1-Score: 92.36%
 Precision: 97.02% on Methods, 97.61% on Results
 Recall: 92.46%
-
+```
 ## 🛠️ Installation & Usage
 ```
-### 1. Clone Repository
+1. Clone Repository
 git clone https://github.com/your-username/medical-literature-assistant.git
-### 2. Install Dependencies
+2. Install Dependencies
 pip install -r requirements.txt
-### 3. Download Dataset
-# Download PubMed 200k RCT dataset from:
-# https://github.com/Franck-Dernoncourt/pubmed-rct
-# Place in data/PubMed_200k_RCT/
-### 4. Launch Application
+3. Download Dataset
+Download PubMed 200k RCT dataset from:
+https://github.com/Franck-Dernoncourt/pubmed-rct
+Place in data/PubMed_200k_RCT/
+4. Launch Application
 python app/app.py
-# Visit http://localhost:5000
+Visit http://localhost:5000
+
 ```
-🎯 Technical Highlights
+** 🎯 Technical Highlights **
 
-Fine-tuned BioBERT on PubMed 200k RCT dataset
-Custom preprocessing pipeline for medical text
-Real-time Flask interface with responsive design
-Batch processing for efficient analysis
-📁 Dataset
+- Fine-tuned BioBERT on PubMed 200k RCT dataset
+- Custom preprocessing pipeline for medical text
+- Real-time Flask interface with responsive design
+- Batch processing for efficient analysis
 
-PubMed 200k RCT: 200,000 medical abstracts
-Sequential sentence classification for structured extraction
-Publicly available on GitHub
+** 📁 Dataset **
+
+- PubMed 200k RCT: 200,000 medical abstracts
+- Sequential sentence classification for structured extraction
+- Publicly available on GitHub
 
 👨‍💻 Author
 Imen Ben Henda - Computer Engineering Student
