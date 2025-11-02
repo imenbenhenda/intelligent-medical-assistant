@@ -30,7 +30,7 @@ F1-Score: 92.36%
 Precision: 97.02% on Methods, 97.61% on Results
 Recall: 92.46%
 ```
-## 🛠️ Installation & Usage
+## 🛠️ Installation and Usage
 ```
 1. Clone Repository
 git clone https://github.com/your-username/medical-literature-assistant.git
