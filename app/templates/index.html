@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Assistant Littérature Médicale</title>
+    <title>Medical Literature Assistant</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 40px; background: #f5f5f5; }
         .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -20,15 +20,15 @@
 </head>
 <body>
     <div class="container">
-        <h1>🏥 Assistant Intelligent pour la Littérature Médicale</h1>
+        <h1>🏥 Intelligent Assistant for Medical Literature </h1>
         
         <form id="analyzeForm">
-            <textarea id="articleText" placeholder="Collez ici le texte d'un article médical..."></textarea>
-            <button type="submit">Analyser l'article</button>
+            <textarea id="articleText" placeholder="Paste medical article text here..."></textarea>
+            <button type="submit">Analyze Article</button>
         </form>
         
         <div id="results" class="result" style="display: none;">
-            <h3>📊 Résultats de l'analyse</h3>
+            <h3>📊 Analysis Results </h3>
             <div id="sentencesAnalysis"></div>
             <div id="summary" class="summary"></div>
         </div>
@@ -40,7 +40,7 @@
             
             const button = this.querySelector('button');
             const originalText = button.textContent;
-            button.textContent = 'Analyse en cours...';
+            button.textContent = 'Analysis Results...';
             button.disabled = true;
             
             const text = document.getElementById('articleText').value;
@@ -74,21 +74,21 @@
             const sentencesDiv = document.getElementById('sentencesAnalysis');
             const summaryDiv = document.getElementById('summary');
             
-            // Afficher l'analyse phrase par phrase
-            sentencesDiv.innerHTML = '<h4>Analyse détaillée:</h4>';
+            
+            sentencesDiv.innerHTML = '<h4>Detailed Analysis:</h4>';
             data.analysis.forEach(item => {
                 const sentenceDiv = document.createElement('div');
                 sentenceDiv.className = 'sentence';
                 sentenceDiv.innerHTML = `
                     <div class="label">${item.label}</div>
                     <div>${item.sentence}</div>
-                    <div class="confidence">Confiance: ${item.confidence}%</div>
+                    <div class="confidence">Confidence: ${item.confidence}%</div>
                 `;
                 sentencesDiv.appendChild(sentenceDiv);
             });
             
-            // Afficher le résumé
-            summaryDiv.innerHTML = `<h4>📝 Résumé structuré:</h4>${data.summary}`;
+           
+            summaryDiv.innerHTML = `<h4>📝 Structured Summary : </h4>${data.summary}`;
             
             resultsDiv.style.display = 'block';
         }

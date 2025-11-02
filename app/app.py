@@ -1,4 +1,4 @@
-# app/app.py - VERSION CORRECTE
+# app/app.py
 from flask import Flask, render_template, request, jsonify
 from transformers import pipeline
 import torch
@@ -6,32 +6,32 @@ import os
 
 app = Flask(__name__)
 
-# Chemin ABSOLU vers votre modèle
+
 MODEL_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "models", "biobert-classifier")
 
-print(f"🔄 Chargement du modèle depuis: {MODEL_PATH}")
+print(f"Loading model from: {MODEL_PATH}")
 
-# Vérifier que le modèle existe
+
 if not os.path.exists(MODEL_PATH):
-    print(f"❌ ERREUR: Modèle introuvable à {MODEL_PATH}")
-    print("📁 Contenu du dossier models/:")
+    print(f"ERROR: Model not found at {MODEL_PATH}")
+    print("Content of models/ folder:")
     models_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "models")
     if os.path.exists(models_dir):
         for item in os.listdir(models_dir):
             print(f"   - {item}")
     exit(1)
 
-# Charger le modèle avec le chemin ABSOLU
+# Load model 
 try:
     classifier = pipeline(
         "text-classification",
-        model=MODEL_PATH,  # Chemin absolu
+        model=MODEL_PATH,
         tokenizer=MODEL_PATH,
-        device=-1  # Forcer CPU pour éviter les problèmes
+        device=-1  # Use CPU
     )
-    print("✅ Modèle chargé avec succès!")
+    print("Model loaded successfully!")
 except Exception as e:
-    print(f"❌ Erreur lors du chargement du modèle: {e}")
+    print(f"Error loading model: {e}")
     exit(1)
 
 @app.route('/')
@@ -41,31 +41,31 @@ def home():
 @app.route('/analyze', methods=['POST'])
 def analyze_article():
     try:
-        # Récupérer le texte de l'article
+        # Get article text
         article_text = request.form.get('text', '')
         
         if not article_text.strip():
-            return jsonify({"error": "Veuillez entrer un texte d'article"}), 400
+            return jsonify({"error": "Please enter article text"}), 400
         
-        # Découper l'article en phrases (simplifié)
+        # Split article into sentences
         sentences = [s.strip() for s in article_text.split('.') if s.strip()]
         
-        # Analyser chaque phrase
+        # Analyze each sentence
         results = []
-        for sentence in sentences[:20]:  # Limiter pour la démo
-            if len(sentence) > 10:  # Ignorer les phrases trop courtes
+        for sentence in sentences[:20]:  # Limit for demo
+            if len(sentence) > 10:  # Ignore short sentences
                 try:
-                    classification = classifier(sentence[:512])[0]  # Limiter la longueur
+                    classification = classifier(sentence[:512])[0]  # Limit length
                     results.append({
                         "sentence": sentence,
                         "label": classification['label'],
                         "confidence": round(classification['score'] * 100, 2)
                     })
                 except Exception as e:
-                    print(f"⚠️ Erreur sur la phrase: {sentence[:50]}... - {e}")
+                    print(f"Error on sentence: {sentence[:50]}... - {e}")
                     continue
         
-        # Générer un résumé structuré
+        # Generate structured summary
         summary = generate_summary(results)
         
         return jsonify({
@@ -76,11 +76,11 @@ def analyze_article():
         })
         
     except Exception as e:
-        print(f"❌ Erreur générale: {e}")
-        return jsonify({"error": f"Erreur lors de l'analyse: {str(e)}"}), 500
+        print(f"General error: {e}")
+        return jsonify({"error": f"Analysis error: {str(e)}"}), 500
 
 def generate_summary(analysis_results):
-    """Génère un résumé structuré à partir des analyses"""
+    """Generate structured summary from analysis results"""
     sections = {
         "OBJECTIVE": [],
         "BACKGROUND": [],
@@ -94,19 +94,19 @@ def generate_summary(analysis_results):
         if label in sections:
             sections[label].append(item["sentence"])
     
-    # Créer le résumé
+    # Create summary
     summary_parts = []
     for section_type, sentences in sections.items():
         if sentences:
-            # Prendre les 2 premières phrases de chaque section
+            # Take first 2 sentences from each section
             preview = ' '.join(sentences[:2])
-            if len(preview) > 150:  # Limiter la longueur
+            if len(preview) > 150:
                 preview = preview[:147] + "..."
             summary_parts.append(f"**{section_type}**: {preview}")
     
-    return "\n\n".join(summary_parts) if summary_parts else "Aucune section identifiée."
+    return "\n\n".join(summary_parts) if summary_parts else "No sections identified."
 
 if __name__ == '__main__':
-    print("🌐 Démarrage du serveur Flask...")
-    print("📍 Accédez à: http://localhost:5000")
+    print("Starting Flask server...")
+    print("Access at: http://localhost:5000")
     app.run(debug=True, host='0.0.0.0', port=5000)

@@ -1,6 +1,6 @@
 """
-train.py - Fine-tuning BioBERT pour la classification des phrases
-Version test rapide pour prototype
+train.py - Fine-tuning BioBERT for sentence classification
+Quick test version for prototype
 """
 
 import os
@@ -15,7 +15,7 @@ from transformers import (
 from sklearn.metrics import precision_recall_fscore_support, accuracy_score
 
 # -------------------------------
-# CONFIGURATION GLOBALE
+# GLOBAL CONFIGURATION
 # -------------------------------
 MODEL_NAME_CLS = "dmis-lab/biobert-base-cased-v1.1"
 OUTPUT_DIR_CLS = "models/biobert-classifier"
@@ -25,19 +25,19 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # -------------------------------
-# 1. CHARGEMENT DES DONNÉES
+# 1. DATA LOADING
 # -------------------------------
-logger.info("Chargement des données prétraitées...")
+logger.info("Loading preprocessed data...")
 
 dataset = load_dataset("json", data_files={
     "train": "data/processed/train_clean.jsonl",
     "validation": "data/processed/dev_clean.jsonl"
 })
 
-print("Colonnes initiales :", dataset["train"].column_names)
-print("Premier article :", dataset["train"][0])
+print("Initial columns:", dataset["train"].column_names)
+print("First article:", dataset["train"][0])
 
-# -------- FLATTEN DES SECTIONS --------
+# -------- FLATTEN SECTIONS --------
 def flatten_dataset(dataset_split):
     texts, labels = [], []
     for article in dataset_split:
@@ -53,23 +53,23 @@ dataset = DatasetDict({
     "validation": flatten_dataset(dataset["validation"])
 })
 
-print("Nouvelles colonnes :", dataset["train"].column_names)
-print("Premier exemple après flatten :", dataset["train"][0])
+print("New columns:", dataset["train"].column_names)
+print("First example after flatten:", dataset["train"][0])
 
-# -------- LIMITER LE DATASET POUR TEST RAPIDE --------
+# -------- LIMIT DATASET FOR QUICK TEST --------
 dataset["train"] = dataset["train"].select(range(min(20000, len(dataset["train"]))))
 dataset["validation"] = dataset["validation"].select(range(min(2000, len(dataset["validation"]))))
-logger.info(f"Dataset limité : {len(dataset['train'])} exemples pour entraînement, {len(dataset['validation'])} pour validation")
+logger.info(f"Limited dataset: {len(dataset['train'])} training examples, {len(dataset['validation'])} validation examples")
 
 # -------------------------------
-# 2. PRÉPARATION DES LABELS
+# 2. LABEL PREPARATION
 # -------------------------------
-logger.info("Préparation des labels...")
+logger.info("Preparing labels...")
 
 label2id = {label: i for i, label in enumerate(LABELS)}
 id2label = {i: label for i, label in enumerate(LABELS)}
 
-print("Mapping des labels :", label2id)
+print("Label mapping:", label2id)
 
 def convert_labels_to_ids(example):
     example['label'] = label2id[example['label']]
@@ -78,9 +78,9 @@ def convert_labels_to_ids(example):
 dataset = dataset.map(convert_labels_to_ids)
 
 # -------------------------------
-# 3. TOKENIZER + ENCODAGE
+# 3. TOKENIZER + ENCODING
 # -------------------------------
-logger.info("Tokenisation des phrases...")
+logger.info("Tokenizing sentences...")
 
 tokenizer_cls = AutoTokenizer.from_pretrained(MODEL_NAME_CLS)
 
@@ -89,7 +89,7 @@ def tokenize_function(batch):
         batch["text"],
         truncation=True,
         padding=True,
-        max_length=64  # Séquence plus courte pour accélérer
+        max_length=64  # Shorter sequence for speed
     )
     encodings["labels"] = batch["label"]
     return encodings
@@ -101,9 +101,9 @@ dataset = dataset.map(
 )
 
 # -------------------------------
-# 4. MODELE DE CLASSIFICATION
+# 4. CLASSIFICATION MODEL
 # -------------------------------
-logger.info("Initialisation du modèle BioBERT...")
+logger.info("Initializing BioBERT model...")
 
 model_cls = AutoModelForSequenceClassification.from_pretrained(
     MODEL_NAME_CLS,
@@ -113,7 +113,7 @@ model_cls = AutoModelForSequenceClassification.from_pretrained(
 )
 
 # -------------------------------
-# 5. METRIQUES
+# 5. METRICS
 # -------------------------------
 def compute_metrics(eval_pred):
     logits, labels = eval_pred
@@ -123,14 +123,14 @@ def compute_metrics(eval_pred):
     return {"accuracy": acc, "precision": precision, "recall": recall, "f1": f1}
 
 # -------------------------------
-# 6. ARGUMENTS D'ENTRAINEMENT
+# 6. TRAINING ARGUMENTS
 # -------------------------------
 training_args = TrainingArguments(
     output_dir=OUTPUT_DIR_CLS,
     learning_rate=3e-5,
     per_device_train_batch_size=8,
     per_device_eval_batch_size=8,
-    num_train_epochs=1,  # Une seule époque pour test rapide
+    num_train_epochs=1,  # One epoch for quick test
     weight_decay=0.01,
     logging_dir="./logs",
     logging_steps=50,
@@ -166,14 +166,14 @@ trainer = Trainer(
 )
 
 # -------------------------------
-# 9. ENTRAINEMENT
+# 9. TRAINING
 # -------------------------------
-logger.info("Démarrage de l'entraînement BioBERT...")
-logger.info(f"Taille du dataset d'entraînement: {len(dataset['train'])}")
-logger.info(f"Taille du dataset de validation: {len(dataset['validation'])}")
+logger.info("Starting BioBERT training...")
+logger.info(f"Training dataset size: {len(dataset['train'])}")
+logger.info(f"Validation dataset size: {len(dataset['validation'])}")
 
 trainer.train()
 trainer.save_model(OUTPUT_DIR_CLS)
 tokenizer_cls.save_pretrained(OUTPUT_DIR_CLS)
 
-logger.info("Modèle de classification entraîné et sauvegardé ✅")
+logger.info("Classification model trained and saved ✅")

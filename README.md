@@ -21,7 +21,7 @@ MedicalLiteratureAssistant/
 ├── src/ # Core ML pipeline
 ├── notebooks/ # Data exploration & analysis
 ├── data/ # Dataset configuration
-└── models/ # Model configuration
+└── models/ 
 ```
 ## 📊 Model Performance
 ```

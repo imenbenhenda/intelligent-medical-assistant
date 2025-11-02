@@ -1,8 +1,8 @@
 # src/model.py
 """
-Module pour le pipeline LLM-based de MedicalLiteratureAssistant
-- Classification de phrases avec BioBERT
-- Résumé d'article avec T5
+LLM-based pipeline module for MedicalLiteratureAssistant
+- Sentence classification with BioBERT
+- Article summarization with T5
 """
 
 import torch
@@ -10,26 +10,26 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 
 # -----------------------------
-# 1️⃣ Classification des phrases
+# 1 Sentence Classification
 # -----------------------------
-# Labels pour chaque type de phrase
+# Labels for each sentence type
 LABELS = ["BACKGROUND", "OBJECTIVE", "METHODS", "RESULTS", "CONCLUSIONS"]
 
-# Charger le tokenizer et le modèle BioBERT
+# Load BioBERT tokenizer and model
 tokenizer_cls = AutoTokenizer.from_pretrained("dmis-lab/biobert-base-cased-v1.1")
 model_cls = AutoModelForSequenceClassification.from_pretrained(
     "dmis-lab/biobert-base-cased-v1.1",
     num_labels=len(LABELS)
 )
-model_cls.eval()  # mode évaluation
+model_cls.eval()  # evaluation mode
 
 def classify_sentence(sentence, model=model_cls, tokenizer=tokenizer_cls):
     """
-    Prédit le label d'une phrase médicale
+    Predicts the label of a medical sentence
     Args:
-        sentence (str): texte de la phrase
+        sentence (str): sentence text
     Returns:
-        str: label prédit
+        str: predicted label
     """
     inputs = tokenizer(sentence, return_tensors="pt", truncation=True, max_length=128)
     with torch.no_grad():
@@ -39,20 +39,20 @@ def classify_sentence(sentence, model=model_cls, tokenizer=tokenizer_cls):
     return LABELS[pred_id]
 
 # -----------------------------
-# 2️⃣ Résumé des articles
+# 2 Article Summarization
 # -----------------------------
-# Charger le tokenizer et le modèle T5
+# Load T5 tokenizer and model
 tokenizer_summ = T5Tokenizer.from_pretrained("t5-small")
 model_summ = T5ForConditionalGeneration.from_pretrained("t5-small")
 model_summ.eval()
 
 def summarize_article(article_sentences, model=model_summ, tokenizer=tokenizer_summ, max_len=150):
     """
-    Génère un résumé à partir d'une liste de phrases classées
+    Generates a summary from a list of classified sentences
     Args:
-        article_sentences (list[str]): phrases classées avec leur label
+        article_sentences (list[str]): classified sentences with their labels
     Returns:
-        str: résumé généré
+        str: generated summary
     """
     input_text = "summarize: " + " ".join(article_sentences)
     inputs = tokenizer(input_text, return_tensors="pt", max_length=512, truncation=True)
@@ -68,17 +68,17 @@ def summarize_article(article_sentences, model=model_summ, tokenizer=tokenizer_s
     return summary
 
 # -----------------------------
-# 3️⃣ Pipeline complet : classification + résumé
+# 3 Complete Pipeline: classification + summarization
 # -----------------------------
 def process_article(article_sentences):
     """
-    Pipeline complet :
-    - Classifie chaque phrase
-    - Génère un résumé structuré
+    Complete pipeline:
+    - Classifies each sentence
+    - Generates a structured summary
     Args:
         article_sentences (list[dict]): [{"label":"UNKNOWN","text":"..."}, ...]
     Returns:
-        str: résumé de l'article
+        str: article summary
     """
     classified_sentences = []
     for s in article_sentences:
@@ -90,10 +90,10 @@ def process_article(article_sentences):
     return summary
 
 # -----------------------------
-# 4️⃣ Exemple rapide d'utilisation
+# 4 Quick usage example
 # -----------------------------
 if __name__ == "__main__":
-    # Exemple d'article
+    # Example article
     example_article = [
         {"label": "UNKNOWN", "text": "This study investigates the effect of drug X on patients."},
         {"label": "UNKNOWN", "text": "We performed a double-blind randomized trial."},
@@ -102,4 +102,4 @@ if __name__ == "__main__":
     ]
 
     summary = process_article(example_article)
-    print("Résumé généré :\n", summary)
+    print("Generated summary:\n", summary)
